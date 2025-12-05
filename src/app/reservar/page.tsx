@@ -213,7 +213,7 @@ const numberInputHandler =
       setter(v === '' ? '' : Number(v));
 
 // ====== Imagens
-const S3_BASE = 'https://mane-reservations-prod.s3.amazonaws.com';
+const S3_BASE = 'https://imagens-app-porks.s3.amazonaws.com';
 const ASSET_BASE = (API_BASE || '').replace(/\/+$/, '');
 
 function sanitizePhoto(raw?: any): string | undefined {
