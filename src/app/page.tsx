@@ -89,7 +89,7 @@ export default function Home() {
           shadow="sm"
           style={{
             background: '#FBF5E9',
-            borderColor: 'rgba(20,108,46,0.15)',
+            borderColor: 'rgba(255, 122, 0, 0.25)', // laranja
           }}
         >
           <Stack gap="md">
@@ -163,7 +163,7 @@ function HomeSkeleton() {
           shadow="sm"
           style={{
             background: '#FBF5E9',
-            borderColor: 'rgba(20,108,46,0.15)',
+            borderColor: 'rgba(255, 122, 0, 0.25)', // laranja
           }}
         >
           <Stack gap="md">
@@ -260,7 +260,7 @@ function MenuCard({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: '#EFFFF3',
+                background: '#e4d6a8ff',
                 flex: '0 0 auto',
                 marginTop: 2,
               }}

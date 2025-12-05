@@ -162,7 +162,7 @@ function joinDateTimeISO(date: Date | null, time: string) {
 }
 
 // slots válidos
-const ALLOWED_SLOTS = ['12:00', '12:30', '13:00', '18:00', '18:30', '19:00'];
+const ALLOWED_SLOTS = ['17:00', '17:30','18:00', '18:30', '19:00', '19:30'];
 function isValidSlot(v: string) {
   return ALLOWED_SLOTS.includes(v);
 }
@@ -566,7 +566,7 @@ async function generatePoster({
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
-  ctx.strokeStyle = '#146C2E';
+  ctx.strokeStyle = '#000000';
   ctx.lineWidth = 16;
   ctx.strokeRect(24, 24, W - 48, H - 48);
 
@@ -577,7 +577,7 @@ async function generatePoster({
     ctx.drawImage(logo, (W - lw) / 2, 80, lw, lh);
   } catch { }
 
-  ctx.fillStyle = '#146C2E';
+  ctx.fillStyle = '#000000';
   ctx.textAlign = 'center';
   ctx.font = '700 56px system-ui, Arial';
   ctx.fillText('RESERVA CONFIRMADA', W / 2, 300);
@@ -1465,7 +1465,7 @@ export default function ReservarMane() {
               fw={400}
               style={{
                 fontFamily: '"Alfa Slab One", system-ui, sans-serif',
-                color: '#146C2E',
+                color: '#000000',
                 fontSize: 'clamp(20px, 5.6vw, 28px)',
               }}
             >
@@ -1498,7 +1498,7 @@ export default function ReservarMane() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     border: '3px solid var(--mantine-color-green-5)',
-                    background: '#EFFFF3',
+                    background: '#f1eee2ff',
                     margin: '0 auto 4px',
                   }}
                 >
@@ -1619,7 +1619,7 @@ export default function ReservarMane() {
                               reservationType === opt.key
                                 ? 'var(--mantine-color-green-5)'
                                 : 'transparent',
-                            background: reservationType === opt.key ? '#EFFFF3' : '#fff',
+                            background: reservationType === opt.key ? 'e4d6a8ff' : '#fff',
                           }}
                         >
                           <Group justify="space-between" align="flex-start">
