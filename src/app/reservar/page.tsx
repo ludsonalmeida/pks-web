@@ -609,15 +609,15 @@ async function generatePoster({
       ctx.drawImage(qr, qrX, qrY, s, s);
       ctx.textAlign = 'center';
       ctx.font = '500 28px system-ui, Arial';
-      ctx.fillStyle = '#0f5132';
+      ctx.fillStyle = '#ff9900ff';
       ctx.fillText('Apresente este QR no check-in', qrX + s / 2, qrY + s + 32);
     } catch { }
   }
 
   ctx.textAlign = 'center';
   ctx.font = '500 30px system-ui, Arial';
-  ctx.fillStyle = '#166534';
-  ctx.fillText('Mané Mercado • mane.com.vc', W / 2, H - 60);
+  ctx.fillStyle = '#ff9900ff';
+  ctx.fillText('Sobradinho Porks • sobradinhoporks.com.br', W / 2, H - 60);
 
   const blob: Blob = await new Promise((r) =>
     canvas.toBlob((b) => r(b!), 'image/jpeg', 0.92)!

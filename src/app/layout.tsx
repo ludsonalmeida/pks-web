@@ -16,8 +16,8 @@ const MetaPixelBootstrapNoSSR = dynamic(() => import('./MetaPixelBootstrap'), {
 });
 
 export const metadata = {
-  title: 'Mané Mercado • Reservas',
-  description: 'Faça sua reserva no Mané Mercado (Águas Claras / Arena Brasília)',
+  title: 'Porks Sobradinho • Reservas',
+  description: 'Faça sua reserva no Porks Sobradinho!',
 };
 
 // Merriweather para títulos — BLACK (900)

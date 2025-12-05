@@ -88,7 +88,7 @@ export default function Home() {
           p="lg"
           shadow="sm"
           style={{
-            background: '#FBF5E9',
+            background: '#fffefdff',
             borderColor: 'rgba(255, 122, 0, 0.25)', // laranja
           }}
         >
