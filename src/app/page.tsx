@@ -110,7 +110,7 @@ export default function Home() {
                 description="Faça uma nova reserva de forma rápida e segura."
                 href={withQuery('/reservar')}
                 icon={<IconCalendarPlus size={20} />}
-                actionColor="green"
+                actionColor="orange"
                 variant="filled"
               />
 
@@ -120,7 +120,7 @@ export default function Home() {
                 description="Consulte sua reserva usando o código (ex.: JT5WK6)."
                 href={withQuery('/consultar')}
                 icon={<IconSearch size={20} />}
-                actionColor="green"
+                actionColor="orange"
                 variant="outline"
               />
             </Stack>
@@ -220,7 +220,7 @@ function MenuCard({
   description: string;
   href: string;
   icon: ReactNode;
-  actionColor?: 'green' | 'dark';
+  actionColor?: 'orange' | 'dark';
   variant?: 'filled' | 'outline';
 }) {
   return (
