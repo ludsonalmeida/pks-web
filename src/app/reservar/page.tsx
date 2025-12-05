@@ -56,9 +56,9 @@ dayjs.locale('pt-br');
 
 // ====== Configs
 const MAX_PEOPLE_WITHOUT_CONCIERGE = 40;
-const MIN_PEOPLE = 8;
+const MIN_PEOPLE = 2;
 const CONCIERGE_WPP_LINK =
-  'https://wa.me/5561982850776?text=Oi%20Concierge!%20Quero%20reservar%20para%20mais%20de%2040%20pessoas.%20Pode%20me%20ajudar%3F';
+  'https://wa.me/5561981776251?text=Oi%20Concierge!%20Quero%20reservar%20para%20mais%20de%2040%20pessoas.%20Pode%20me%20ajudar%3F';
 
 // ====== Tipos
 type UnitOption = { id: string; name: string; slug?: string };
@@ -699,7 +699,7 @@ export default function ReservarMane() {
 
   const [areasMeta, setAreasMeta] = useState<Record<string, AreaMeta>>({});
 
-  const [adultos, setAdultos] = useState<number | ''>(8);
+  const [adultos, setAdultos] = useState<number | ''>(2);
   const [criancas, setCriancas] = useState<number | ''>(0);
   const [data, setData] = useState<Date | null>(null);
   const [hora, setHora] = useState<string>('');
@@ -1699,7 +1699,7 @@ export default function ReservarMane() {
                     <Grid gutter="md">
                       <Grid.Col span={6}>
                         <NumberInput
-                          label="Adultos (mín. total 8)"
+                          label="Adultos (mín. total 2)"
                           min={1}
                           value={adultos}
                           onChange={numberInputHandler(setAdultos)}
