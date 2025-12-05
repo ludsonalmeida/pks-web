@@ -1392,7 +1392,7 @@ export default function ReservarMane() {
 
   async function shareWhatsapp() {
     const text = [
-      `Minha reserva no Mané Mercado 🎉`,
+      `Minha reserva no Porks Sobradinho 🎉`,
       '',
       `• Unidade: ${boardingUnitLabel}`,
       `• Área: ${boardingAreaName}`,
@@ -1453,7 +1453,7 @@ export default function ReservarMane() {
           <Stack gap={8} align="center">
             <NextImage
               src="/images/1.png"
-              alt="Mané Mercado"
+              alt="Porks Sobradinho"
               width={180}
               height={60}
               style={{ height: 60, width: 'auto' }}
@@ -1469,7 +1469,7 @@ export default function ReservarMane() {
                 fontSize: 'clamp(20px, 5.6vw, 28px)',
               }}
             >
-              Mané Mercado Reservas
+              Porks Reservas
             </Title>
 
             <Text
@@ -1478,7 +1478,7 @@ export default function ReservarMane() {
               ta="center"
               style={{ fontFamily: '"Comfortaa", system-ui, sans-serif' }}
             >
-              Águas Claras &amp; Brasília
+              Sobradinho
             </Text>
 
             <Card

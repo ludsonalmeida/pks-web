@@ -36,27 +36,27 @@ const comfortaa = Comfortaa({
   display: 'swap',
 });
 
-// Paleta "green" substituída pelo verde institucional (#034c46 como shade 7)
-const maneGreen: string[] = [
-  '#e6f0ef', // 0
-  '#cde2df', // 1
-  '#9cc4bf', // 2
-  '#6aa7a0', // 3
-  '#3a8a81', // 4
-  '#0f6e63', // 5
-  '#04534c', // 6
-  '#034c46', // 7  <- principal
-  '#023a36', // 8
-  '#012b29', // 9
+// Paleta "orange" substituída pelo verde institucional (#034c46 como shade 7)
+const porksOrange: string[] = [
+  '#FFF4E6', // 0
+  '#FFE0BF', // 1
+  '#FFC999', // 2
+  '#FFB066', // 3
+  '#FF9933', // 4
+  '#FF7A00', // 5 <- principal
+  '#E56700', // 6
+  '#B85000', // 7
+  '#733400', // 8
+  '#401D00', // 9
 ];
 
 const theme = createTheme({
-  primaryColor: 'green',
-  primaryShade: { light: 7, dark: 5 },
+  primaryColor: 'orange',
+  primaryShade: { light: 5, dark: 7 },
   defaultRadius: 'md',
 
   colors: {
-    green: maneGreen as any,
+    green: porksOrange  as any,
   },
 
   fontFamily:

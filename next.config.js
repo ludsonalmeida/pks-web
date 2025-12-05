@@ -18,7 +18,7 @@ const nextConfig = {
   images: {
     remotePatterns: [
       // produção
-      { protocol: 'https', hostname: 'api.sobradinhoporks.com.br' },
+      { protocol: 'https', hostname: 'api2.sobradinhoporks.com.br' },
       // dev/local
       { protocol: 'http', hostname: 'localhost', port: '4000' },
     ],

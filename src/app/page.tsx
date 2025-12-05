@@ -73,7 +73,7 @@ export default function Home() {
         <Stack align="center" gap={6} mb="sm">
           <Image
             src="/images/1.png"
-            alt="Mané Mercado"
+            alt="Porks Sobradinho"
             width={180}
             height={80}
             priority
