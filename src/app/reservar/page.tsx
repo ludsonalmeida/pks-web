@@ -33,7 +33,6 @@ import BoardingPass from './BoardingPass';
 import Link from 'next/link';
 import {
   ensureAnalyticsReady,
-  setActiveUnitPixelFromUnit,
   trackReservationMade,
 } from '@/lib/analytics';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -162,7 +161,7 @@ function joinDateTimeISO(date: Date | null, time: string) {
 }
 
 // slots válidos
-const ALLOWED_SLOTS = ['17:00', '17:30','18:00', '18:30', '19:00', '19:30'];
+const ALLOWED_SLOTS = ['17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
 function isValidSlot(v: string) {
   return ALLOWED_SLOTS.includes(v);
 }
@@ -810,17 +809,6 @@ export default function ReservarMane() {
       alive = false;
     };
   }, []);
-
-  // Pixel por unidade
-  useEffect(() => {
-    if (!unidade || units.length === 0) return;
-    const unitObj = units.find((u) => u.id === unidade);
-    if (unitObj) {
-      setActiveUnitPixelFromUnit({ id: unitObj.id, name: unitObj.name, slug: unitObj.slug });
-    } else {
-      setActiveUnitPixelFromUnit(unidade);
-    }
-  }, [unidade, units]);
 
   // Metadados de áreas por unidade
   useEffect(() => {
@@ -1677,16 +1665,9 @@ export default function ReservarMane() {
                       placeholder={unitsLoading ? 'Carregando...' : 'Selecione'}
                       data={units.map((u) => ({ value: u.id, label: u.name }))}
                       value={unidade}
+
                       onChange={(val) => {
                         setUnidade(val);
-                        const u = units.find((x) => x.id === val);
-                        if (u)
-                          setActiveUnitPixelFromUnit({
-                            id: u.id,
-                            name: u.name,
-                            slug: u.slug,
-                          });
-                        else if (val) setActiveUnitPixelFromUnit(val);
                       }}
                       withAsterisk
                       leftSection={<IconBuildingStore size={16} />}
