@@ -1,5 +1,7 @@
 // src/lib/analytics.ts
-// Cliente puro — não usa process/import.meta
+// Cliente puro — não usa process/import.meta diretamente
+// (Next injeta envs NEXT_PUBLIC_* no bundle, mas pra manter "cliente puro",
+// você pode passar o pixelId por parâmetro usando setPixelIdRuntime.)
 
 declare global {
   interface Window {
@@ -8,9 +10,10 @@ declare global {
     dataLayer?: any[];
     __manePixels?: {
       loadedIds: Set<string>;
-      activeId?: string;
+      activeId?: string;      // aqui agora é o pixel global ativo
       scriptLoaded?: boolean;
       debug?: boolean;
+      pixelId?: string;       // pixel global runtime
     };
   }
 }
@@ -20,20 +23,26 @@ const dlog = (...a: any[]) =>
   window.__manePixels?.debug &&
   console.log('[analytics]', ...a);
 
-// ======= MAPA unidade → Pixel ID (ajuste conforme vem do seu /units) =======
-const UNIT_PIXEL_MAP: Record<string, string> = {
-  // Slugs esperados
-  'Porks Sobradinho': '2431106123757946',
-};
+// ✅ Pixel global (sem unidade)
+// 1) preferência: pixelId setado em runtime via setPixelIdRuntime
+// 2) fallback: NEXT_PUBLIC_META_PIXEL_ID (se o bundler tiver injetado)
+// 3) senão: vazio
+function getPixelId(): string {
+  if (typeof window !== 'undefined' && window.__manePixels?.pixelId) {
+    return window.__manePixels.pixelId;
+  }
 
-function normalizeKey(input?: string | null) {
-  if (!input) return '';
-  const key = input.toString().trim().toLowerCase();
-  return key
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // tira acento
-    .replace(/\s+/g, ' ')
-    .replace(/[^\w\s-]/g, '') // tira pontuação
-    .trim();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const envPixel = (globalThis as any)?.process?.env?.NEXT_PUBLIC_META_PIXEL_ID;
+  return (envPixel || '').toString().trim();
+}
+
+// Permite setar/alterar o pixel sem “regras de unidade”
+export function setPixelIdRuntime(pixelId?: string | null) {
+  if (typeof window === 'undefined') return;
+  window.__manePixels = window.__manePixels || { loadedIds: new Set() };
+  window.__manePixels.pixelId = (pixelId || '').trim() || undefined;
+  dlog('runtime pixelId set to', window.__manePixels.pixelId);
 }
 
 function ensureMetaScript() {
@@ -43,7 +52,8 @@ function ensureMetaScript() {
 
   if (!window.fbq) {
     (function (f: any, b: any, e: any, v: any, n?: any, t?: any, s?: any) {
-      if (f.fbq) return; n = f.fbq = function () {
+      if (f.fbq) return;
+      n = f.fbq = function () {
         n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
       };
       if (!f._fbq) f._fbq = n;
@@ -60,20 +70,37 @@ function ensureMetaScript() {
 }
 
 // Garante bootstrap mínimo (fbq stub + dataLayer) sem reinjetar nada duplicado
-export function ensureAnalyticsReady() {
+export function ensureAnalyticsReady(opts?: { pixelId?: string; debug?: boolean }) {
   try {
-    ensureMetaScript(); // cria fbq stub e injeta fbevents.js se ainda não houver
+    ensureMetaScript();
+
+    window.__manePixels = window.__manePixels || { loadedIds: new Set() };
+    if (typeof opts?.debug === 'boolean') window.__manePixels.debug = opts.debug;
+
+    // se você quiser setar por parâmetro (sem depender de env)
+    if (opts?.pixelId) setPixelIdRuntime(opts.pixelId);
+
     (window as any).dataLayer = (window as any).dataLayer || [];
+
+    // ✅ inicializa o pixel global (se tiver id)
+    const pixelId = getPixelId();
+    if (pixelId) {
+      ensurePixel(pixelId);
+      window.__manePixels.activeId = pixelId;
+    } else {
+      dlog('no global pixelId found (set NEXT_PUBLIC_META_PIXEL_ID or setPixelIdRuntime)');
+    }
+
     dlog('ensureAnalyticsReady: ok');
   } catch (e) {
     console.warn('ensureAnalyticsReady error', e);
   }
 }
 
-
 function ensurePixel(pixelId: string) {
   ensureMetaScript();
   if (!pixelId) return;
+
   window.__manePixels = window.__manePixels || { loadedIds: new Set() };
 
   if (!window.__manePixels.loadedIds.has(pixelId)) {
@@ -82,7 +109,6 @@ function ensurePixel(pixelId: string) {
     window.__manePixels.loadedIds.add(pixelId);
 
     // 🔵 importante para aparecer no Pixel Helper:
-    // manda um PageView vinculado a ESSE pixel específico
     try {
       window.fbq?.('trackSingle', pixelId, 'PageView');
       dlog('trackSingle PageView sent for', pixelId);
@@ -94,57 +120,17 @@ function ensurePixel(pixelId: string) {
   }
 }
 
-function findPixelForUnit(input?: string | null): string | undefined {
-  if (!input) return;
-  const n = normalizeKey(input);
+function fbqTrackCustomGlobal(eventName: string, payload: any) {
+  if (!window.fbq) { dlog('fbq missing on track', eventName, payload); return; }
 
-  // tenta direto
-  if (UNIT_PIXEL_MAP[n]) return UNIT_PIXEL_MAP[n];
-
-  // heurísticas simples (ajude se o nome vier "estranho")
-  if (/brasili/.test(n) || /arena brasil/.test(n) || n === 'bsb') {
-    return UNIT_PIXEL_MAP['brasilia'];
+  const pixelId = getPixelId() || window.__manePixels?.activeId;
+  if (pixelId) {
+    dlog('trackSingle', eventName, '→', pixelId, payload);
+    window.fbq('trackSingle', pixelId, eventName, payload);
+  } else {
+    dlog('trackCustom (no pixelId)', eventName, payload);
+    window.fbq('trackCustom', eventName, payload);
   }
-  if (/agua/.test(n) && /clara/.test(n)) {
-    return UNIT_PIXEL_MAP['aguas claras'];
-  }
-  return undefined;
-}
-
-export function setActiveUnitPixelByKey(unitKeyOrName?: string | null) {
-  const id = findPixelForUnit(unitKeyOrName || '');
-  if (!id) {
-    dlog('no pixel found for', unitKeyOrName);
-    return;
-  }
-  ensurePixel(id);
-  window.__manePixels = window.__manePixels || { loadedIds: new Set() };
-  window.__manePixels.activeId = id;
-  dlog('active pixel set to', id, 'for', unitKeyOrName);
-}
-
-export function setActiveUnitPixelFromUnit(
-  unit: { id?: string; name?: string | null; slug?: string | null } | string | null | undefined
-) {
-  if (!unit) return;
-  const candidates: string[] = [];
-  if (typeof unit === 'string') candidates.push(unit);
-  else {
-    if (unit.slug) candidates.push(unit.slug);
-    if (unit.name) candidates.push(unit.name);
-    if (unit.id) candidates.push(unit.id);
-  }
-  for (const k of candidates) {
-    const id = findPixelForUnit(k);
-    if (id) {
-      ensurePixel(id);
-      window.__manePixels = window.__manePixels || { loadedIds: new Set() };
-      window.__manePixels.activeId = id;
-      dlog('active pixel set (from object) →', id, 'via', k);
-      return;
-    }
-  }
-  dlog('no pixel match for unit object/str', unit);
 }
 
 // ===== Eventos =====
@@ -163,18 +149,6 @@ function norm(v?: string | null) {
   return (v || '').trim();
 }
 
-function fbqTrackCustomActive(singleEventName: string, payload: any) {
-  const active = window.__manePixels?.activeId;
-  if (!window.fbq) { dlog('fbq missing on track', singleEventName, payload); return; }
-  if (active) {
-    dlog('trackSingle', singleEventName, '→', active, payload);
-    window.fbq('trackSingle', active, singleEventName, payload);
-  } else {
-    dlog('trackCustom (no active pixel)', singleEventName, payload);
-    window.fbq('trackCustom', singleEventName, payload);
-  }
-}
-
 export async function trackReservationMade(ev: ReservationEvent) {
   const payload = {
     reservation_code: norm(ev.reservationCode),
@@ -186,7 +160,7 @@ export async function trackReservationMade(ev: ReservationEvent) {
     status: norm(ev.status),
     source: norm(ev.source),
   };
-  fbqTrackCustomActive('Reservation Made', payload);
+  fbqTrackCustomGlobal('Reservation Made', payload);
   (window as any).dataLayer?.push({ event: 'reservation_made', ...payload });
 }
 
@@ -201,6 +175,6 @@ export async function trackReservationCheckin(ev: ReservationEvent) {
     status: norm(ev.status),
     source: norm(ev.source),
   };
-  fbqTrackCustomActive('Reservation Checkin', payload);
+  fbqTrackCustomGlobal('Reservation Checkin', payload);
   (window as any).dataLayer?.push({ event: 'reservation_checkin', ...payload });
 }

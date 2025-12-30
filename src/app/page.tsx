@@ -17,13 +17,15 @@ import {
 } from '@mantine/core';
 import { IconSearch, IconCalendarPlus } from '@tabler/icons-react';
 
-// ⬇️ bootstrap do analytics (não mexido)
+// ✅ Pixel global: só bootstrap do analytics
 import { ensureAnalyticsReady } from '@/lib/analytics';
 
 export default function Home() {
-  // Inicializa fbq/gtag apenas uma vez no client
+  // Inicializa fbq/gtag apenas uma vez no client (pixel global vem do NEXT_PUBLIC_META_PIXEL_ID)
   useEffect(() => {
-    ensureAnalyticsReady();
+    // opcional: debug só fora de produção
+    const debug = process.env.NODE_ENV !== 'production';
+    ensureAnalyticsReady({ debug });
   }, []);
 
   // Mostra skeleton até hidratar (e um tique a mais para suavizar)
@@ -33,26 +35,29 @@ export default function Home() {
     return () => clearTimeout(id);
   }, []);
 
-  // --- NOVO: capturar query atual (UTMs) e reaproveitar nos links
-  const [query, setQuery] = useState<string>('');
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setQuery(window.location.search || '');
-    }
+  // Capturar query atual (UTMs) e reaproveitar nos links
+  const query = useMemo(() => {
+    if (typeof window === 'undefined') return '';
+    return window.location.search || '';
   }, []);
 
   // helper que anexa a query atual ao destino
   const withQuery = useMemo(() => {
     return (basePath: string) => {
       if (!query) return basePath;
-      // se já houver query no basePath (não é nosso caso), mesclaria aqui.
+
+      const cleanQuery = query.replace(/^\?/, '');
+      if (!cleanQuery) return basePath;
+
       const hasHash = basePath.includes('#');
-      if (!hasHash) return `${basePath}${basePath.includes('?') ? '&' : '?'}${query.replace(/^\?/, '')}`;
+      if (!hasHash) {
+        return `${basePath}${basePath.includes('?') ? '&' : '?'}${cleanQuery}`;
+      }
 
       // mantém o hash no final, anexando query antes dele
       const [path, hash] = basePath.split('#');
       const sep = path.includes('?') ? '&' : '?';
-      return `${path}${sep}${query.replace(/^\?/, '')}#${hash}`;
+      return `${path}${sep}${cleanQuery}#${hash}`;
     };
   }, [query]);
 
@@ -93,18 +98,13 @@ export default function Home() {
           }}
         >
           <Stack gap="md">
-            <Title
-              order={3}
-              ta="center"
-              fw={600}
-              style={{ fontSize: 22, lineHeight: 1.25 }}
-            >
+            <Title order={3} ta="center" fw={600} style={{ fontSize: 22, lineHeight: 1.25 }}>
               Como podemos te ajudar?
             </Title>
 
             {/* Lista de opções */}
             <Stack gap={14}>
-              {/* 1) Reservar (realçado) — COM UTM */}
+              {/* Reservar (realçado) — COM UTM */}
               <MenuCard
                 title="Reservar Mesa"
                 description="Faça uma nova reserva de forma rápida e segura."
@@ -114,7 +114,7 @@ export default function Home() {
                 variant="filled"
               />
 
-              {/* 2) Localizar (borda/ghost) — opcional: também manter UTM */}
+              {/* Localizar — COM UTM */}
               <MenuCard
                 title="Localizar Reserva"
                 description="Consulte sua reserva usando o código (ex.: JT5WK6)."
@@ -150,12 +150,10 @@ function HomeSkeleton() {
       }}
     >
       <Container size={560} px="md">
-        {/* HEADER */}
         <Stack align="center" gap={6} mb="sm">
           <Skeleton height={44} width={160} radius="sm" />
         </Stack>
 
-        {/* CARD PRINCIPAL */}
         <Card
           withBorder
           radius="lg"
@@ -163,7 +161,7 @@ function HomeSkeleton() {
           shadow="sm"
           style={{
             background: '#FBF5E9',
-            borderColor: 'rgba(255, 122, 0, 0.25)', // laranja
+            borderColor: 'rgba(255, 122, 0, 0.25)',
           }}
         >
           <Stack gap="md">
@@ -171,7 +169,6 @@ function HomeSkeleton() {
               <Skeleton height={26} width={260} mx="auto" radius="sm" />
             </Title>
 
-            {/* CARD 1 */}
             <Card withBorder radius="md" p="md" shadow="xs" style={{ background: '#fff' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, alignItems: 'center' }}>
                 <Stack gap={6}>
@@ -185,7 +182,6 @@ function HomeSkeleton() {
               </div>
             </Card>
 
-            {/* CARD 2 */}
             <Card withBorder radius="md" p="md" shadow="xs" style={{ background: '#fff' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, alignItems: 'center' }}>
                 <Stack gap={6}>
@@ -246,7 +242,6 @@ function MenuCard({
         }
       }}
     >
-      {/* Sempre 2 colunas: info | botão (também no mobile) */}
       <div className="menuCard">
         <div className="menuInfo">
           <Group gap={8} wrap="nowrap" align="flex-start">
@@ -295,16 +290,13 @@ function MenuCard({
             color={actionColor}
             variant={variant}
             className="menuActionBtn"
-            styles={{
-              root: variant === 'outline' ? { background: 'transparent' } : undefined,
-            }}
+            styles={{ root: variant === 'outline' ? { background: 'transparent' } : undefined }}
           >
             Acessar
           </Button>
         </div>
       </div>
 
-      {/* CSS do card (botão à direita no mobile também) */}
       <style jsx>{`
         .menuCard {
           display: grid;

@@ -9,21 +9,29 @@ export default function MetaPixelBootstrap() {
     if (typeof window === 'undefined') return;
     const W = window as any;
 
-    // Estado global do pixel (único lugar que inicializa a estrutura)
+    // Estado global do pixel
     W.__manePixels = W.__manePixels || {
       loadedIds: new Set<string>(),
       activeId: undefined as string | undefined,
       scriptLoaded: false,
       debug: false,
+      pixelId: undefined as string | undefined, // opcional (runtime)
     };
 
-    // deixe true só enquanto estiver testando
-    W.__manePixels.debug = true;
+    // ✅ Debug só fora de produção (ou habilite via env)
+    // Se você criou NEXT_PUBLIC_PIXEL_DEBUG=1, use isso:
+    const envDebug =
+      (typeof process !== 'undefined' &&
+        (process as any)?.env?.NEXT_PUBLIC_PIXEL_DEBUG === '1') ||
+      false;
 
-    const dlog = (...a: any[]) => W.__manePixels?.debug && console.log('[MetaPixelBootstrap]', ...a);
+    W.__manePixels.debug = envDebug || process.env.NODE_ENV !== 'production';
 
+    const dlog = (...a: any[]) =>
+      W.__manePixels?.debug && console.log('[MetaPixelBootstrap]', ...a);
+
+    // Se já existe fbq, não reinjeta nada
     if (!W.fbq) {
-      // Snippet oficial do Meta (Facebook Pixel)
       (function (f: any, b: any, e: any, v: any, n?: any, t?: any, s?: any) {
         if (f.fbq) return;
         n = f.fbq = function () {
@@ -42,20 +50,18 @@ export default function MetaPixelBootstrap() {
       })(W, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
       W.__manePixels.scriptLoaded = true;
-      dlog('fbq stubbed & script tag injected');
+      dlog('fbq stubbed & fbevents.js injected');
     } else {
       dlog('fbq already present');
+      W.__manePixels.scriptLoaded = true;
     }
 
-    // PageView global
-    try {
-      W.fbq?.('track', 'PageView');
-      dlog('Global PageView sent');
-    } catch (e) {
-      console.warn('fbq PageView error', e);
-    }
+    // ❌ NÃO dispara PageView aqui.
+    // Quem dispara:
+    // - ensureAnalyticsReady() (init + trackSingle PageView)
+    // - e/ou componente de PageView por rota (usePathname)
   }, []);
 
-  // Mantemos o Script vazio só para garantir "afterInteractive"
+  // Script vazio apenas para garantir strategy afterInteractive
   return <Script id="meta-fbq-bootstrap" strategy="afterInteractive">{''}</Script>;
 }
