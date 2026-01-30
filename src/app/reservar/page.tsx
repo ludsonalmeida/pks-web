@@ -796,6 +796,10 @@ export default function ReservarMane() {
           .map(([id, name]) => ({ id, name }));
         if (!alive) return;
         setUnits(normalized);
+        // Seleciona a primeira unidade automaticamente
+        if (normalized.length > 0) {
+          setUnidade(normalized[0].id);
+        }
       } catch (e: any) {
         if (!alive) return;
         setUnitsError(e?.message || 'Falha ao carregar unidades.');
@@ -1043,10 +1047,6 @@ export default function ReservarMane() {
       setError(`Mínimo de ${MIN_PEOPLE} pessoas para reservar.`);
       return;
     }
-    if (isSameDayAsToday(data)) {
-      setError(ONE_DAY_AHEAD_MSG);
-      return;
-    }
     if (qty > MAX_PEOPLE_WITHOUT_CONCIERGE) {
       setShowConcierge(true);
       return;
@@ -1066,12 +1066,6 @@ export default function ReservarMane() {
       }
       if (!data || !hora) {
         setError('Selecione data e horário.');
-        goToStep(1);
-        setSending(false);
-        return;
-      }
-      if (isSameDayAsToday(data)) {
-        setError(ONE_DAY_AHEAD_MSG);
         goToStep(1);
         setSending(false);
         return;
@@ -1719,13 +1713,10 @@ export default function ReservarMane() {
                               return;
                             }
 
-                            const isSameDay = isSameDayAsToday(dateValue);
-                            const isPast = dayjs(dateValue).isBefore(TOMORROW_START, 'day');
+                            const isPast = dayjs(dateValue).isBefore(TODAY_START, 'day');
 
-                            if (isSameDay) {
-                              setDateError(ONE_DAY_AHEAD_MSG);
-                            } else if (isPast) {
-                              setDateError('Selecione uma data a partir de amanhã');
+                            if (isPast) {
+                              setDateError('Selecione uma data a partir de hoje');
                             } else {
                               setDateError(null);
                             }
@@ -1740,7 +1731,7 @@ export default function ReservarMane() {
                           valueFormat="DD/MM/YYYY"
                           leftSection={<IconCalendar size={16} />}
                           allowDeselect={false}
-                          minDate={TOMORROW_START}
+                          minDate={TODAY_START}
                           size="md"
                           styles={{ input: { height: rem(48) } }}
                           error={dateError}
