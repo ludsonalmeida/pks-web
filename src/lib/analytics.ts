@@ -162,6 +162,20 @@ export async function trackReservationMade(ev: ReservationEvent) {
   };
   fbqTrackCustomGlobal('Reservation Made', payload);
   (window as any).dataLayer?.push({ event: 'reservation_made', ...payload });
+
+  // Google Ads: dispara conversão de reserva confirmada
+  try {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'conversion', {
+        send_to: 'AW-17637617336/UOtdCOa115AcELjdotpB',
+        value: 30,
+        currency: 'BRL',
+        transaction_id: norm(ev.reservationCode),
+      });
+    }
+  } catch (e) {
+    console.warn('[gtag conversion] ignorado:', e);
+  }
 }
 
 export async function trackReservationCheckin(ev: ReservationEvent) {

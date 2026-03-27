@@ -95,6 +95,7 @@ const theme = createTheme({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const GA4 = process.env.NEXT_PUBLIC_GA4_ID;
+  const GADS = process.env.NEXT_PUBLIC_GADS_ID;
 
   // >>> Flags do snippet CSQ/HJ
   const ENABLE_CSQ = process.env.NEXT_PUBLIC_ENABLE_CSQ !== '0'; // defina 1 para ligar
@@ -106,19 +107,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ColorSchemeScript defaultColorScheme="light" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-        {/* GA4 base (só se houver ID configurado) */}
-        {GA4 ? (
+        {/* Google tag: GA4 + Google Ads (carrega uma única vez pelo ID do GA4) */}
+        {(GA4 || GADS) ? (
           <>
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA4}`} strategy="afterInteractive" />
-            <Script id="ga4" strategy="afterInteractive">
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA4 ?? GADS}`}
+              strategy="afterInteractive"
+            />
+            <Script id="gtag-init" strategy="afterInteractive">
               {`
                 try {
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
                   gtag('js', new Date());
-                  gtag('config', '${GA4}', { debug_mode: ${process.env.NODE_ENV !== 'production' ? 'true' : 'false'} });
+                  ${GA4 ? `gtag('config', '${GA4}', { debug_mode: ${process.env.NODE_ENV !== 'production' ? 'true' : 'false'} });` : ''}
+                  ${GADS ? `gtag('config', '${GADS}');` : ''}
                 } catch (e) {
-                  console.error('[GA4 init] ignorado:', e);
+                  console.error('[gtag init] ignorado:', e);
                 }
               `}
             </Script>
