@@ -281,6 +281,59 @@ function Ambiente() {
   );
 }
 
+/* ─── Promo Reservas Antecipadas (anúncio Reserve Sua Mesa) ── */
+const PROMO_TIERS = [
+  { min: 5,  ganha: ['5 chopes Pilsen'] },
+  { min: 8,  ganha: ['7 chopes Pilsen', '1 drink'] },
+  { min: 10, ganha: ['9 chopes Pilsen', '1 petisco individual', '1 drink'] },
+];
+
+function Promo({ reservarHref }: { reservarHref: string }) {
+  return (
+    <section style={{ background: G.black, padding: 'clamp(56px,10vw,100px) clamp(16px,5vw,64px)', borderTop: `2px solid ${G.amber}`, position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', backgroundImage: 'repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(255,255,255,.018) 80px)' }} />
+      <div style={{ maxWidth: 760, margin: '0 auto', position: 'relative', zIndex: 1, textAlign: 'center' }}>
+        <Rv>
+          <Eyebrow color={G.amberLight}>Promo de reservas antecipadas</Eyebrow>
+          <h2 style={{ fontFamily: display, fontWeight: 400, fontSize: 'clamp(2.6rem,8vw,4.6rem)', lineHeight: .95, letterSpacing: '.04em', textTransform: 'uppercase', color: G.cream, margin: '0 0 18px' }}>
+            Reserve <span style={{ color: G.amberLight }}>sua mesa!</span>
+          </h2>
+          <div style={{ display: 'inline-flex', alignItems: 'center', padding: '8px 22px', borderRadius: 4, background: G.amberLight, color: G.black, fontFamily: sans, fontSize: 13, fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', marginBottom: 40 }}>
+            De quinta a domingo
+          </div>
+        </Rv>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {PROMO_TIERS.map((t, i) => (
+            <Rv key={t.min} delay={i * 80} style={{ display: 'flex', alignItems: 'center', gap: 'clamp(16px,4vw,28px)', background: 'rgba(255,255,255,.04)', border: '1.5px solid rgba(245,166,35,.25)', borderRadius: 8, padding: 'clamp(16px,3vw,24px)', textAlign: 'left' }}>
+              <div style={{ flexShrink: 0, width: 'clamp(88px,15vw,112px)', height: 'clamp(88px,15vw,112px)', borderRadius: '50%', border: `2px solid ${G.cream}`, boxShadow: '0 0 0 5px rgba(245,237,216,.12)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+                <span style={{ fontFamily: sans, fontSize: 'clamp(8px,1.4vw,10px)', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: G.cream, opacity: .85 }}>A partir de</span>
+                <span style={{ fontFamily: display, fontSize: 'clamp(2.4rem,6vw,3.2rem)', lineHeight: 1, color: G.amberLight }}>{t.min}</span>
+              </div>
+              <div>
+                <div style={{ fontFamily: sans, fontSize: 'clamp(11px,1.8vw,13px)', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: 'rgba(245,237,216,.7)', marginBottom: 6 }}>Pessoas ganham</div>
+                <div style={{ fontFamily: display, fontSize: 'clamp(1.5rem,4.5vw,2.3rem)', lineHeight: 1.05, letterSpacing: '.03em', textTransform: 'uppercase', color: G.amberLight }}>{t.ganha[0]}</div>
+                {t.ganha.slice(1).map(g => (
+                  <div key={g} style={{ fontFamily: display, fontSize: 'clamp(1.1rem,3.2vw,1.5rem)', lineHeight: 1.15, letterSpacing: '.03em', textTransform: 'uppercase', color: G.white }}>+ {g}</div>
+                ))}
+              </div>
+            </Rv>
+          ))}
+        </div>
+
+        <Rv delay={280}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}>
+            <CtaBtn href={reservarHref} primary={true}><CalIcon />Reservar agora</CtaBtn>
+          </div>
+          <p style={{ fontFamily: sans, fontSize: 12, opacity: .45, letterSpacing: '.04em', marginTop: 18 }}>
+            Cortesias válidas pra reservas antecipadas de quinta a domingo, liberadas na mesa conforme o número de pessoas da reserva.
+          </p>
+        </Rv>
+      </div>
+    </section>
+  );
+}
+
 /* ─── Skeleton ─────────────────────────────────────────── */
 function HomeSkeleton() {
   return <div style={{ minHeight: '100dvh', background: G.black }} />;
@@ -483,14 +536,14 @@ export default function Home() {
             </div>
 
             <h1 className="hero-h1" style={{ fontFamily: display, fontWeight: 400, fontSize: 'clamp(2.6rem,8vw,5.2rem)', lineHeight: .95, letterSpacing: '.04em', textTransform: 'uppercase', textShadow: '0 2px 40px rgba(0,0,0,.9)', margin: 0, width: '100%' }}>
-              Sua mesa garantida<br />
-              <span style={{ color: G.amberLight }}>pra noite que</span><br />
-              <span style={{ color: G.brightRed }}>você merece</span>
+              Reserve sua mesa<br />
+              <span style={{ color: G.amberLight }}>e ganhe chopes</span><br />
+              <span style={{ color: G.brightRed }}>de cortesia</span>
             </h1>
 
             <p className="hero-sub" style={{ fontFamily: sans, fontSize: 'clamp(.9rem,2.2vw,1.1rem)', lineHeight: 1.7, opacity: .9, maxWidth: 500, marginTop: 24, textShadow: '0 2px 12px rgba(0,0,0,.8)' }}>
-              Porco de verdade, chope gelado e música boa.<br />
-              Reserve sua mesa e chegue no Porks sabendo que tem lugar.
+              Promo de reservas antecipadas de quinta a domingo:<br />
+              a partir de 5 pessoas, a mesa já ganha 5 chopes Pilsen.
             </p>
 
             <div className="hero-ctas" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginTop: 36, width: '100%' }}>
@@ -513,6 +566,9 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        {/* ══ PROMO RESERVAS ANTECIPADAS ════════════════════ */}
+        <Promo reservarHref={withQuery('/reservar')} />
 
         {/* ══ SOBRE ═════════════════════════════════════════ */}
         <Sobre />
@@ -608,7 +664,7 @@ export default function Home() {
             </Rv>
             <Rv delay={160}>
               <p style={{ fontFamily: sans, fontSize: 'clamp(.9rem,2vw,1.1rem)', opacity: .7, marginBottom: 40, lineHeight: 1.7 }}>
-                Reserve agora em segundos. Chegue no Porks sabendo que tem lugar reservado, porco pronto e chope gelado esperando por você.
+                Reserve antecipado de quinta a domingo e ganhe chopes de cortesia pra sua mesa. Chegue no Porks com lugar garantido, porco pronto e chope gelado esperando por você.
               </p>
             </Rv>
             <Rv delay={240}>
@@ -619,7 +675,7 @@ export default function Home() {
             </Rv>
             <Rv delay={320}>
               <div className="cta-tags" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginTop: 28 }}>
-                {['🐷 Porco', '🍺 Chope', '🎸 Música', '🎂 Aniversários', '🏆 Sem fila'].map(t => (
+                {['🍻 Chopes de cortesia', '🐷 Porco', '🍺 Chope', '🎸 Música', '🏆 Sem fila'].map(t => (
                   <span key={t} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.1)', borderRadius: 4, padding: '5px 14px', fontFamily: sans, fontSize: 12, fontWeight: 600, opacity: .75, letterSpacing: '.04em' }}>{t}</span>
                 ))}
               </div>
