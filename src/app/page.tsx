@@ -527,10 +527,21 @@ export default function Home() {
           textAlign: 'center', overflow: 'hidden',
           padding: 'clamp(60px,8vw,90px) clamp(16px,4vw,48px) clamp(110px,14vw,140px)',
         }}>
-          {/* luzes de bar em CSS puro (sem iframe, sem rede) */}
-          <div style={{ position: 'absolute', inset: 0, zIndex: 0, background: `radial-gradient(ellipse 70% 55% at 18% 12%,rgba(139,26,26,.85) 0%,transparent 58%),radial-gradient(ellipse 45% 40% at 82% 18%,rgba(231,138,25,.28) 0%,transparent 55%),radial-gradient(ellipse 60% 65% at 85% 85%,rgba(196,30,30,.5) 0%,transparent 55%),radial-gradient(ellipse 40% 30% at 50% 0%,rgba(245,169,74,.15) 0%,transparent 60%),${G.black}` }} />
-          {/* vinheta: escura nas bordas, mais limpa no centro */}
-          <div style={{ position: 'absolute', inset: 0, zIndex: 2, background: 'radial-gradient(ellipse 90% 80% at 50% 45%, transparent 40%, rgba(13,12,11,.55) 100%)', pointerEvents: 'none' }} />
+          {/* fallback de luzes de bar enquanto o vídeo carrega */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 0, background: `radial-gradient(ellipse 70% 55% at 18% 12%,rgba(139,26,26,.85) 0%,transparent 58%),radial-gradient(ellipse 45% 40% at 82% 18%,rgba(231,138,25,.28) 0%,transparent 55%),radial-gradient(ellipse 60% 65% at 85% 85%,rgba(196,30,30,.5) 0%,transparent 55%),${G.black}` }} />
+
+          {/* vídeo do bar (YouTube) — mais visível: opacity alta + vinheta seletiva */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 1, overflow: 'hidden', pointerEvents: 'none' }}>
+            <iframe
+              src="https://www.youtube.com/embed/rajCPpAG62A?si=cW2vRpmcx4ErkdMd&autoplay=1&mute=1&loop=1&playlist=rajCPpAG62A&controls=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1"
+              allow="autoplay; fullscreen"
+              title="Porks Sobradinho"
+              style={{ position: 'absolute', top: '50%', left: '50%', width: '100vw', height: '56.25vw', minHeight: '100vh', minWidth: '177.78vh', transform: 'translate(-50%,-50%)', opacity: .75, border: 'none' }}
+            />
+          </div>
+
+          {/* vinheta seletiva: escura nas bordas e no rodapé (onde tem texto), bar visível no centro */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 2, background: 'radial-gradient(ellipse 60% 50% at 50% 100%, rgba(13,12,11,.95) 0%, transparent 60%), linear-gradient(to bottom, rgba(13,12,11,.55) 0%, rgba(13,12,11,.18) 35%, rgba(13,12,11,.9) 100%)', pointerEvents: 'none' }} />
           {/* bottom fade */}
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 240, zIndex: 3, background: 'linear-gradient(to bottom,transparent,#0D0C0B)', pointerEvents: 'none' }} />
 
