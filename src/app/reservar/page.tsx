@@ -472,12 +472,12 @@ function AreaCard({
               bottom: 10,
               right: 10,
               background: 'rgba(255,255,255,0.96)',
-              color: '#0f5132',
+              color: '#1A1714',
               fontWeight: 800,
               fontSize: 'clamp(12px, 3.5vw, 14px)',
               padding: '6px 10px',
               borderRadius: 12,
-              border: '2px solid #0f5132',
+              border: '2px solid #1A1714',
               boxShadow: '0 6px 18px rgba(0,0,0,.25)',
               letterSpacing: '.2px',
               textTransform: 'none',
@@ -587,7 +587,7 @@ async function generatePoster({
 
   ctx.textAlign = 'left';
   ctx.font = '600 44px system-ui, Arial';
-  ctx.fillStyle = '#0f5132';
+  ctx.fillStyle = '#1A1714';
   const left = 120,
     top = 470,
     lh2 = 70;

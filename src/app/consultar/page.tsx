@@ -28,8 +28,7 @@ import { useSearchParams } from 'next/navigation'; // ⬅️ NOVO
 
 /* ====== helpers/consts ====== */
 const UNIDADES = [
-  { id: 'aguas-claras', label: 'Mané Mercado — Águas Claras' },
-  { id: 'arena-brasilia', label: 'Mané Mercado — Arena Brasília' },
+  { id: 'sobradinho', label: 'Porks Sobradinho' },
 ];
 
 const AREAS = [
@@ -222,7 +221,7 @@ export default function ConsultarReservaPage() {
         areaName = areaName || a;
       }
 
-      const unitLabel = labelFromUnitId(unitId) || (data.unit ?? 'Mané Mercado');
+      const unitLabel = labelFromUnitId(unitId) || (data.unit ?? 'Porks Sobradinho');
       const areaFinal = areaNameFromId(areaName || '') || (areaName ?? '—');
 
       const dateStr = dayjs(data.reservationDate).format('DD/MM/YYYY');
@@ -280,7 +279,7 @@ export default function ConsultarReservaPage() {
           <Stack align="center" gap={6} mb="sm">
             <Image
               src="/images/1.png"
-              alt="Mané Mercado"
+              alt="Porks Porco & Chope"
               width={160}
               height={44}
               priority
@@ -291,7 +290,7 @@ export default function ConsultarReservaPage() {
               fw={500}
               ta="center"
               style={{
-                color: '#146C2E',
+                color: '#1A1714',
                 fontFamily: '"Alfa Slab One", system-ui, sans-serif',
               }}
             >

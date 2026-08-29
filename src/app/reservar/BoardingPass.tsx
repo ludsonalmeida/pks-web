@@ -513,7 +513,7 @@ export default function BoardingPass({
                   padding: 10,
                   background: '#ffffff',
                   borderRadius: 12,
-                  border: '2px solid #146C2E',
+                  border: '2px solid #1A1714',
                   boxShadow: '0 8px 20px rgba(0,0,0,.08)',
                 }}
               >
