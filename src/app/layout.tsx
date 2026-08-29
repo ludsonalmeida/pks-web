@@ -4,7 +4,7 @@ import '@mantine/dates/styles.css';
 import './globals.css';
 
 import { ColorSchemeScript, MantineProvider, createTheme, rem } from '@mantine/core';
-import { Merriweather, Comfortaa } from 'next/font/google';
+import { Merriweather, Comfortaa, Bebas_Neue, Barlow } from 'next/font/google';
 import React from 'react';
 import Script from 'next/script';
 import dynamic from 'next/dynamic';
@@ -33,6 +33,20 @@ const comfortaa = Comfortaa({
   weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-comfortaa',
+  display: 'swap',
+});
+
+// Bebas Neue + Barlow: identidade da home (mesma linguagem do criativo dos ads)
+const bebas = Bebas_Neue({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-bebas',
+  display: 'swap',
+});
+const barlow = Barlow({
+  weight: ['400', '600', '700', '800'],
+  subsets: ['latin'],
+  variable: '--font-barlow',
   display: 'swap',
 });
 
@@ -152,7 +166,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
       </head>
       <body
-        className={`${merri.variable} ${comfortaa.variable}`}
+        className={`${merri.variable} ${comfortaa.variable} ${bebas.variable} ${barlow.variable}`}
         style={{
           background: 'transparent',
           WebkitFontSmoothing: 'antialiased',
