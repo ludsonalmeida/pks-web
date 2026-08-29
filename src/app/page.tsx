@@ -184,12 +184,6 @@ function Rv({ children, style, delay = 0 }: { children: React.ReactNode; style?:
 
 /* ─── Promo Reservas Antecipadas (espelho do anúncio) ──── */
 function Promo({ reservarHref }: { reservarHref: string }) {
-  const [hoje, setHoje] = useState(false);
-  useEffect(() => {
-    const d = new Date().getDay(); // qui=4 sex=5 sáb=6 dom=0
-    setHoje(d === 0 || d >= 4);
-  }, []);
-
   return (
     <section className="grain" style={{ background: G.black, padding: 'clamp(72px,14vw,130px) clamp(16px,5vw,64px)', borderTop: `2px solid ${G.orange}`, position: 'relative', overflow: 'hidden' }}>
       <div style={{ maxWidth: 760, margin: '0 auto', position: 'relative', zIndex: 2, textAlign: 'center' }}>
@@ -199,7 +193,7 @@ function Promo({ reservarHref }: { reservarHref: string }) {
             Reservou.<br /><span style={{ color: G.orange }}>Ganhou chope.</span>
           </h2>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 22px', borderRadius: 4, background: G.orange, color: G.black, fontFamily: sans, fontSize: 13, fontWeight: 800, letterSpacing: '.18em', textTransform: 'uppercase', marginBottom: 44, transform: 'rotate(-1deg)' }}>
-            {hoje ? 'Promo válida hoje · qui a dom' : 'De quinta a domingo'}
+            De quinta a domingo, sua mesa ganha chopes
           </div>
         </Rv>
 
