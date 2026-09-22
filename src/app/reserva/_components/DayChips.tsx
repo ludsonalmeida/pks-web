@@ -29,6 +29,8 @@ export function DayChips({
   const days = Array.from({ length: DAYS_AHEAD }, (_, i) => dayjs(today).add(i, 'day').format('YYYY-MM-DD'));
   const inStrip = value ? days.includes(value) : true;
   const [other, setOther] = React.useState(!inStrip);
+  // data digitada/escolhida no calendário nativo: só entra na jornada quando a pessoa confirma
+  const [pending, setPending] = React.useState<string>(value && !inStrip ? value : '');
   const stripRef = React.useRef<HTMLDivElement>(null);
 
   // o dia escolhido fica visível na faixa
@@ -93,17 +95,27 @@ export function DayChips({
           {value && !inStrip ? dayjs(value).format('dddd, D [de] MMMM') : 'Escolher uma data mais pra frente'}
         </button>
         {other && (
-          <input
-            id="reserva-outra-data"
-            className={s.dateInput}
-            type="date"
-            aria-label="Escolher outra data"
-            min={earliest.dateYMD}
-            max={dayjs(today).add(180, 'day').format('YYYY-MM-DD')}
-            value={value && !inStrip ? value : ''}
-            onChange={(e) => onChange(e.target.value || null)}
-            autoFocus
-          />
+          <div className={d.pickRow}>
+            <input
+              id="reserva-outra-data"
+              className={s.dateInput}
+              type="date"
+              aria-label="Escolher outra data"
+              min={earliest.dateYMD}
+              max={dayjs(today).add(180, 'day').format('YYYY-MM-DD')}
+              value={pending}
+              onChange={(e) => setPending(e.target.value)}
+            />
+            <button
+              type="button"
+              className={d.pickBtn}
+              disabled={!pending || pending < earliest.dateYMD || isClosedDay(pending, sp)}
+              onClick={() => onChange(pending)}
+            >
+              Usar {pending ? dayjs(pending).format('D [de] MMM') : 'essa data'}
+            </button>
+            {pending && isClosedDay(pending, sp) && <p className={d.pickErr}>Segunda a casa não abre. Escolha outro dia.</p>}
+          </div>
         )}
       </div>
     </div>
