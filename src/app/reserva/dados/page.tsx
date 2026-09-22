@@ -189,6 +189,8 @@ export default function Dados() {
     const bonus = withBirthday && (!!iso || knownBirthday);
     saveDraft({ ...d, phone: onlyDigits(phone), fullName: name.trim(), birthday: withBirthday ? birthday : '' });
     const params = new URLSearchParams(window.location.search);
+    const at = d.attribution || {};
+    const pick = (k: keyof typeof at) => params.get(String(k)) || (at[k] as string | undefined) || undefined;
     const body = {
       fullName: name.trim(),
       phone: onlyDigits(phone),
@@ -208,12 +210,13 @@ export default function Dados() {
       // a equipe vê o bônus na reserva
       notes: bonus ? `Aniversário informado: ${BIRTHDAY_BONUS} na reserva.` : '',
       reservationType: d.occasion || 'PARTICULAR',
-      utm_source: params.get('utm_source') || undefined,
-      utm_medium: params.get('utm_medium') || undefined,
-      utm_campaign: params.get('utm_campaign') || undefined,
-      utm_term: params.get('utm_term') || undefined,
-      url: window.location.href,
-      ref: document.referrer || null,
+      utm_source: pick('utm_source'),
+      utm_medium: pick('utm_medium'),
+      utm_campaign: pick('utm_campaign'),
+      utm_content: pick('utm_content'),
+      utm_term: pick('utm_term'),
+      url: at.url || window.location.href,
+      ref: at.ref || document.referrer || null,
     };
     try {
       const res = await fetch('/api/reserva', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });

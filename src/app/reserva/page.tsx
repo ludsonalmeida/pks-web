@@ -67,6 +67,12 @@ function Tela1() {
     // link com o tamanho da mesa (bio, anúncio "reserve pra 8"): ?people=8 preenche o grupo
     const wantPeople = Number(params.get('people') || params.get('pessoas') || 0);
     if (!d.adults && wantPeople >= 1 && wantPeople <= 200) { d.adults = Math.floor(wantPeople); d.kids = 0; }
+    // guarda a origem (UTMs do anúncio/bio) no rascunho: a tela 2 não tem mais a query na URL
+    const utm: Record<string, string> = {};
+    for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']) { const v = params.get(k); if (v) utm[k] = v; }
+    if (Object.keys(utm).length || !d.attribution) {
+      d.attribution = { ...(d.attribution || {}), ...utm, url: window.location.href, ref: document.referrer || d.attribution?.ref || '' };
+    }
     const wantDate = params.get('date') || params.get('dia');
     if (!d.dateYMD && wantDate && /^\d{4}-\d{2}-\d{2}$/.test(wantDate) && wantDate >= dayjs().format('YYYY-MM-DD')) d.dateYMD = wantDate;
     setDraft(d); setPeopleDone(false); setReady(true); track('step_view', { step: 'quando' });
