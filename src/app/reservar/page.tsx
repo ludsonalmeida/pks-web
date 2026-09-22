@@ -125,6 +125,19 @@ type SavedReservationLS = {
 };
 
 const LS_KEY = 'mane:lastReservation';
+// Reserva só conta como "ativa" no site até ACTIVE_GRACE_HOURS depois do horário marcado.
+// Antes, reserva vencida sem check-in restaurava do localStorage e prendia o cliente na
+// tela antiga, sem deixar reservar de novo.
+const ACTIVE_GRACE_HOURS = 3;
+function isReservationStillActive(r: { status?: string; reservationDate?: string }): boolean {
+  if (r.status !== 'AWAITING_CHECKIN') return false;
+  const at = dayjs(r.reservationDate);
+  if (!at.isValid()) return false;
+  return at.add(ACTIVE_GRACE_HOURS, 'hour').isAfter(dayjs());
+}
+function clearSavedReservation() {
+  try { localStorage.removeItem(LS_KEY); } catch { /* ignore */ }
+}
 
 // ====== Helpers
 const FALLBACK_IMG =
@@ -758,7 +771,7 @@ export default function ReservarMane() {
           );
           if (resp.ok) {
             const r = (await resp.json()) as ReservationDto;
-            if (r.status === 'AWAITING_CHECKIN') {
+            if (isReservationStillActive(r)) {
               setReservationType((prev) =>
                 prev === 'ANIVERSARIO'
                   ? 'ANIVERSARIO'
@@ -770,8 +783,10 @@ export default function ReservarMane() {
               setStep(4);
               return;
             }
+            // reserva vencida ou já usada: esquece e libera o formulário
+            clearSavedReservation();
           } else {
-            localStorage.removeItem(LS_KEY);
+            clearSavedReservation();
           }
         } catch {
           // ignore
@@ -2074,6 +2089,19 @@ export default function ReservarMane() {
                       Enviar no WhatsApp
                     </Button>
                   </Group>
+
+                  <Button
+                    variant="subtle"
+                    color="dark"
+                    radius="md"
+                    mt="xs"
+                    onClick={() => {
+                      clearSavedReservation();
+                      if (typeof window !== 'undefined') window.location.assign(window.location.pathname);
+                    }}
+                  >
+                    Fazer uma nova reserva
+                  </Button>
 
                   {posterUrl && (
                     <Box mt="sm" style={{ width: '100%', maxWidth: 360 }}>

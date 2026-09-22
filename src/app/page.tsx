@@ -384,7 +384,7 @@ export default function Home() {
       if (typeof fbq === 'function') fbq('track', 'PageView');
     };
 
-    fire();
+    // PageView inicial já sai do script inline (init + PageView); aqui só navegação SPA.
     window.addEventListener('popstate', fire);
 
     const _pushState = history.pushState;
@@ -422,22 +422,20 @@ export default function Home() {
           t.src=v;s=b.getElementsByTagName(e)[0];
           s.parentNode.insertBefore(t,s)}(window, document,'script',
           'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', '${META_PIXEL_ID}');
-          fbq('track', 'PageView');
+          // init + PageView UMA vez: quem chegar primeiro (este script ou o analytics.ts
+          // no useEffect) registra em __manePixels.loadedIds e o outro pula.
+          window.__manePixels = window.__manePixels || { loadedIds: new Set() };
+          if (!window.__manePixels.loadedIds.has('${META_PIXEL_ID}')) {
+            window.__manePixels.loadedIds.add('${META_PIXEL_ID}');
+            window.__manePixels.activeId = '${META_PIXEL_ID}';
+            fbq('init', '${META_PIXEL_ID}');
+            fbq('track', 'PageView');
+          }
         `}
       </Script>
 
-      {/* noscript fallback */}
-      <noscript>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          height="1"
-          width="1"
-          style={{ display: 'none' }}
-          src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
-          alt=""
-        />
-      </noscript>
+      {/* noscript fallback REMOVIDO: o React recriava o <img> no cliente e o pixel
+          contava um PageView extra (noscript=1) em toda visita com JS ligado. */}
 
       <style>{`
         @keyframes fadeUp   { from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none} }

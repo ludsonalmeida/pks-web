@@ -27,14 +27,17 @@ const dlog = (...a: any[]) =>
 // 1) preferência: pixelId setado em runtime via setPixelIdRuntime
 // 2) fallback: NEXT_PUBLIC_META_PIXEL_ID (se o bundler tiver injetado)
 // 3) senão: vazio
+// Pixel do Porks Sobradinho. Fallback fixo porque o Next só injeta NEXT_PUBLIC_*
+// quando o acesso é literal (process.env.NOME); via globalThis o valor chegava vazio
+// no browser e o pixel nunca iniciava em /reservar (nenhum evento de reserva no Meta).
+const DEFAULT_PIXEL_ID = '2431106123757946';
+
 function getPixelId(): string {
   if (typeof window !== 'undefined' && window.__manePixels?.pixelId) {
     return window.__manePixels.pixelId;
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const envPixel = (globalThis as any)?.process?.env?.NEXT_PUBLIC_META_PIXEL_ID;
-  return (envPixel || '').toString().trim();
+  const envPixel = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+  return ((envPixel || '').toString().trim()) || DEFAULT_PIXEL_ID;
 }
 
 // Permite setar/alterar o pixel sem “regras de unidade”
@@ -125,8 +128,9 @@ function fbqTrackCustomGlobal(eventName: string, payload: any) {
 
   const pixelId = getPixelId() || window.__manePixels?.activeId;
   if (pixelId) {
-    dlog('trackSingle', eventName, '→', pixelId, payload);
-    window.fbq('trackSingle', pixelId, eventName, payload);
+    // Evento CUSTOM (nome fora do padrão Meta) exige trackSingleCustom; com trackSingle o pixel descarta.
+    dlog('trackSingleCustom', eventName, '→', pixelId, payload);
+    window.fbq('trackSingleCustom', pixelId, eventName, payload);
   } else {
     dlog('trackCustom (no pixelId)', eventName, payload);
     window.fbq('trackCustom', eventName, payload);
@@ -150,17 +154,32 @@ function norm(v?: string | null) {
 }
 
 export async function trackReservationMade(ev: ReservationEvent) {
+  // SEM nome/e-mail/telefone: a Meta descarta evento com dado pessoal nos parâmetros
+  // (o custom "Reservation Made" nunca chegava; o Schedule, sem PII, chega).
   const payload = {
     reservation_code: norm(ev.reservationCode),
-    full_name: norm(ev.fullName),
-    email: norm(ev.email),
-    phone: norm(ev.phone),
     unit: norm(ev.unit),
     area: norm(ev.area),
     status: norm(ev.status),
     source: norm(ev.source),
   };
   fbqTrackCustomGlobal('Reservation Made', payload);
+  // Evento padrão do Meta (Schedule) pra otimização de conjuntos por reserva confirmada.
+  try {
+    const pixelId = getPixelId() || window.__manePixels?.activeId;
+    const std = {
+      content_name: 'Reserva Porks Sobradinho',
+      content_category: norm(ev.unit) || 'sobradinho',
+      value: 30,
+      currency: 'BRL',
+    };
+    if (window.fbq && pixelId) {
+      window.fbq('trackSingle', pixelId, 'Schedule', std, { eventID: norm(ev.reservationCode) || undefined });
+      dlog('trackSingle Schedule →', pixelId, std);
+    }
+  } catch (e) {
+    console.warn('[fbq Schedule] ignorado:', e);
+  }
   (window as any).dataLayer?.push({ event: 'reservation_made', ...payload });
 
   // Google Ads: dispara conversão de reserva confirmada
@@ -181,9 +200,6 @@ export async function trackReservationMade(ev: ReservationEvent) {
 export async function trackReservationCheckin(ev: ReservationEvent) {
   const payload = {
     reservation_code: norm(ev.reservationCode),
-    full_name: norm(ev.fullName),
-    email: norm(ev.email),
-    phone: norm(ev.phone),
     unit: norm(ev.unit),
     area: norm(ev.area),
     status: norm(ev.status),

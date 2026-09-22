@@ -69,7 +69,28 @@ function areaAcronym(s: string) {
 }
 
 /** Formata CPF (com privacidade) */
+/** Promo "Reservou. Ganhou chope." (mesma regra da home): qui-dom, chegada 17h-19h30 */
+const PROMO_TIERS = [
+  { min: 10, ganha: '9 chopes Pilsen, 1 petisco individual e 1 drink' },
+  { min: 8, ganha: '7 chopes Pilsen e 1 drink' },
+  { min: 5, ganha: '5 chopes Pilsen' },
+];
+function promoFor(people: number, dateStr: string): { title: string; body: string } | null {
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(dateStr || '');
+  if (!m) return null;
+  const dow = new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])).getDay(); // 0=dom
+  const promoDay = dow === 0 || dow >= 4; // qui(4), sex(5), sáb(6), dom(0)
+  if (!promoDay) return null;
+  const tier = PROMO_TIERS.find((t) => people >= t.min);
+  if (tier) {
+    return { title: 'Cortesia da mesa', body: `${tier.ganha} por conta da casa. Chegue entre 17h e 19h30 e apresente esta reserva.` };
+  }
+  return { title: 'Quase lá', body: `Com 5 pessoas a mesa ganha 5 chopes Pilsen. Você reservou ${people}: se a galera crescer, atualize a reserva.` };
+}
+
 function fmtCPF(v?: string | null) {
+  // a API pública já devolve o CPF mascarado (000.***.***-00): repassa como veio
+  if (v && v.includes('*')) return v;
   const d = String(v || '').replace(/\D/g, '').slice(0, 11);
   if (d.length !== 11) return '—';
   // máscara LGPD: 000.***.***-00
@@ -238,10 +259,10 @@ export default function BoardingPass({
                 </Badge>
               </Group>
 
-              {/* Aviso de e-mail */}
+              {/* Orientação (o site NÃO envia e-mail; não prometer) */}
               <Text size="sm" ta="center" style={{ fontSize: 'clamp(12px, 3.6vw, 14px)' }}>
-                Enviamos o <b>código de reserva</b> e o <b>link de consulta</b> para seu e-mail
-                {emailHint ? ` (${emailHint})` : ''}.
+                A <b>confirmação chega no seu WhatsApp</b> em instantes. Tire um print desta tela
+                ou envie o convite pra galera logo abaixo.
               </Text>
 
               <Divider my="md" w="100%" />
@@ -485,6 +506,30 @@ export default function BoardingPass({
                 </Box>
               </Box>
             )}
+
+            {/* Promo dos chopes (o cliente veio por ela; confirma aqui) */}
+            {(() => {
+              const promo = promoFor(people, dateStr);
+              if (!promo) return null;
+              return (
+                <Box
+                  style={{
+                    margin: `${rem(10)} 0 ${rem(4)}`,
+                    padding: `${rem(10)} ${rem(12)}`,
+                    border: '2px dashed #E78A19',
+                    borderRadius: rem(10),
+                    background: '#FFF7EA',
+                  }}
+                >
+                  <Text size="xs" fw={800} style={{ letterSpacing: '.12em', textTransform: 'uppercase', color: '#B85C00' }}>
+                    {promo.title}
+                  </Text>
+                  <Text size="sm" style={{ fontSize: 'clamp(12px, 3.6vw, 14px)', lineHeight: 1.4 }}>
+                    {promo.body}
+                  </Text>
+                </Box>
+              );
+            })()}
 
             {/* Faixa de furinhos */}
             <Box style={{ position: 'relative', marginTop: rem(6), marginBottom: rem(10) }}>
