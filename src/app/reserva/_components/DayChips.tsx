@@ -3,19 +3,19 @@
 import * as React from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
-import { IconBeer, IconCalendarPlus } from '@tabler/icons-react';
+import { IconBeer, IconCalendarPlus, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import s from '../reserva.module.css';
 import d from './day.module.css';
 import { PROMO_DOWS, earliestBookable, isClosedDay } from '../_lib/rules';
 
 dayjs.locale('pt-br');
 
-const DAYS_AHEAD = 9;
+const DAYS_AHEAD = 14;
 
 /**
  * Faixa de cartões de calendário: dia da semana em cima, número grande, mês embaixo.
  * Quinta a domingo levam a etiqueta de chope (dias de cortesia). Segunda aparece fechada.
- * "Outra data" abre o calendário nativo para datas mais longe.
+ * O botão "Escolher uma data mais pra frente" (fora da faixa, sempre visível) abre o calendário nativo.
  */
 export function DayChips({
   value, onChange, sp,
@@ -38,6 +38,8 @@ export function DayChips({
     el?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
   }, [value]);
 
+  const scrollBy = (dir: 1 | -1) => stripRef.current?.scrollBy({ left: dir * 3 * 86, behavior: 'smooth' });
+
   const label = (ymd: string) => {
     if (ymd === today) return 'Hoje';
     if (ymd === days[1]) return 'Amanhã';
@@ -46,6 +48,9 @@ export function DayChips({
 
   return (
     <div className={s.block}>
+      <div className={d.stripWrap}>
+      <button type="button" className={`${d.arrow} ${d.arrowL}`} aria-label="Dias anteriores" onClick={() => scrollBy(-1)}><IconChevronLeft size={18} stroke={2.4} /></button>
+      <button type="button" className={`${d.arrow} ${d.arrowR}`} aria-label="Mais dias" onClick={() => scrollBy(1)}><IconChevronRight size={18} stroke={2.4} /></button>
       <div ref={stripRef} className={d.strip} role="radiogroup" aria-label="Que dia">
         {days.map((ymd, i) => {
           const dt = dayjs(ymd);
@@ -76,35 +81,31 @@ export function DayChips({
             </button>
           );
         })}
-        <button
-          type="button"
-          role="radio"
-          aria-checked={other}
-          className={`${d.day} ${d.other}`}
-          style={{ animationDelay: `${DAYS_AHEAD * 45}ms` }}
-          onClick={() => { setOther(true); if (inStrip) onChange(null); }}
-        >
-          <IconCalendarPlus size={22} stroke={2} aria-hidden="true" />
-          <span className={d.wd}>Outra</span>
-          <span className={d.mo}>data</span>
-        </button>
+      </div>
       </div>
 
       <p className={d.legend}><IconBeer size={13} stroke={2.4} aria-hidden="true" /> Quinta a domingo a mesa ganha chope, a partir de 5 pessoas.</p>
 
-      {other && (
-        <input
-          id="reserva-outra-data"
-          className={s.dateInput}
-          type="date"
-          aria-label="Escolher outra data"
-          min={earliest.dateYMD}
-          max={dayjs(today).add(120, 'day').format('YYYY-MM-DD')}
-          value={value && !inStrip ? value : ''}
-          onChange={(e) => onChange(e.target.value || null)}
-          autoFocus
-        />
-      )}
+      {/* datas além da faixa: botão sempre visível, abre o calendário nativo */}
+      <div className={d.otherRow}>
+        <button type="button" className={`${d.otherBtn} ${other ? d.otherOn : ''}`} aria-pressed={other} onClick={() => { setOther(true); if (inStrip) onChange(null); }}>
+          <IconCalendarPlus size={18} stroke={2.2} aria-hidden="true" />
+          {value && !inStrip ? dayjs(value).format('dddd, D [de] MMMM') : 'Escolher uma data mais pra frente'}
+        </button>
+        {other && (
+          <input
+            id="reserva-outra-data"
+            className={s.dateInput}
+            type="date"
+            aria-label="Escolher outra data"
+            min={earliest.dateYMD}
+            max={dayjs(today).add(180, 'day').format('YYYY-MM-DD')}
+            value={value && !inStrip ? value : ''}
+            onChange={(e) => onChange(e.target.value || null)}
+            autoFocus
+          />
+        )}
+      </div>
     </div>
   );
 }

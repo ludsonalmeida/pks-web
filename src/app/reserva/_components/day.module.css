@@ -1,9 +1,35 @@
 /* Cartões de dia: faixa rolável, número grande em Bebas, etiqueta de chope nos dias de cortesia. */
 .strip {
+  min-width: 0; width: 100%;
   display: flex; gap: 10px; overflow-x: auto; padding: 6px 4px 10px; margin: -6px -4px -4px;
   scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch;
 }
 .strip::-webkit-scrollbar { display: none; }
+/* borda direita esmaecida: sinal de que a faixa continua */
+.stripWrap { position: relative; min-width: 0; width: 100%; } /* min-width 0: a faixa não pode alargar o bloco (grid) */
+.stripWrap::after {
+  content: ''; position: absolute; top: 0; bottom: 4px; right: -4px; width: 44px; pointer-events: none;
+  background: linear-gradient(90deg, rgba(243, 234, 211, 0), var(--creme) 85%);
+}
+/* setas: só no desktop, onde não se arrasta com o dedo */
+.arrow {
+  display: none; position: absolute; top: 50%; z-index: 2; width: 34px; height: 34px; margin-top: -19px; border-radius: 50%;
+  border: 2px solid var(--line); background: var(--paper); color: var(--ink); cursor: pointer; place-items: center; box-shadow: var(--shadow);
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+.arrow:hover { border-color: var(--teal); transform: scale(1.06); }
+.arrowL { left: -14px; } .arrowR { right: -14px; }
+@media (min-width: 720px) and (hover: hover) { .arrow { display: grid; } }
+
+/* botão de data mais pra frente */
+.otherRow { display: grid; gap: 10px; margin-top: 6px; min-width: 0; }
+.otherBtn {
+  min-height: 48px; padding: 0 16px; border-radius: 999px; border: 2px dashed var(--link); background: transparent; color: var(--link);
+  font: inherit; font-weight: 700; font-size: 15px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+.otherBtn:hover { background: var(--gold-soft); transform: translateY(-1px); }
+.otherOn { border-style: solid; background: var(--teal); border-color: var(--teal); color: var(--onp); }
 
 .day {
   flex: none; scroll-snap-align: center; width: 76px; min-height: 96px; padding: 10px 6px 8px;
@@ -37,9 +63,5 @@
 }
 .day[aria-checked='true'] .tag { background: var(--ink); color: var(--creme); }
 .closed .wd { color: var(--red); }
-
-.other { border-style: dashed; color: var(--link); gap: 4px; align-content: center; }
-.other .wd, .other .mo { color: inherit; }
-.other[aria-checked='true'] { border-style: solid; color: var(--onp); }
 
 .legend { margin: 6px 0 0; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--link); }

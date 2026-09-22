@@ -67,6 +67,8 @@ function Tela1() {
     // link com o tamanho da mesa (bio, anúncio "reserve pra 8"): ?people=8 preenche o grupo
     const wantPeople = Number(params.get('people') || params.get('pessoas') || 0);
     if (!d.adults && wantPeople >= 1 && wantPeople <= 200) { d.adults = Math.floor(wantPeople); d.kids = 0; }
+    const wantDate = params.get('date') || params.get('dia');
+    if (!d.dateYMD && wantDate && /^\d{4}-\d{2}-\d{2}$/.test(wantDate) && wantDate >= dayjs().format('YYYY-MM-DD')) d.dateYMD = wantDate;
     setDraft(d); setPeopleDone(false); setReady(true); track('step_view', { step: 'quando' });
     try { ensureAnalyticsReady(); } catch { /* analytics nunca derruba a jornada */ }
     const edit = params.get('edit');
@@ -320,10 +322,12 @@ function Tela1() {
           <SlotGrid dateYMD={draft.dateYMD} sp={sp} rules={rules} fullSlots={fullSlots} value={draft.time}
             onChange={(tm) => { patch({ time: tm, areaId: null, areaName: null }); setEditing(null); }} />
         ))}
-        <div className={s.slotNote}>
-          <span>Riscado: passou, encerrou, lotou ou fechado.</span>
-          <span>{draft.dateYMD ? fmtLongDate(draft.dateYMD) : ''}</span>
-        </div>
+        {draft.dateYMD && (
+          <div className={s.slotNote}>
+            <span>Reservas das 18h às 21h. A mesa espera 15 minutos.</span>
+            <span>{fmtLongDate(draft.dateYMD)}</span>
+          </div>
+        )}
         {dayRules.length > 0 && lastSlot && (
           <div className={`${s.alert} ${s.alertInfo}`} role="status">
             <b>Neste dia a casa recebe reservas até {lastSlot.replace(':00', 'h').replace(':30', 'h30')}.</b>
