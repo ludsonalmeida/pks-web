@@ -2,3 +2,6 @@ node_modules/
 .next
 mane-web.zip
 pks-web.zip
+# ambiente local (token do CRM), nunca versionar
+.env.development.local
+tsconfig.tsbuildinfo
