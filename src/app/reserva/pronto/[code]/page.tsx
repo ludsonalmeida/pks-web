@@ -88,7 +88,7 @@ export default function Pronto() {
 
         <div className={s.rule}>
           <b>Combinado de chegada</b>
-          <span>Sua mesa espera você por 15 minutos. Seus convidados têm até {tolEnd} para chegar com o código. Chegando entre 17h e 19h30, de quinta a domingo, a cortesia de chopes é liberada na mesa.</span>
+          <span>Sua mesa espera você por 15 minutos. Seus convidados têm até {tolEnd} para chegar com o código. De quinta a domingo, a cortesia de chopes é liberada na mesa.</span>
         </div>
       </div>
 

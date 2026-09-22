@@ -11,7 +11,7 @@ Porte da jornada v2 do sistema do Mané para o Porks. Rota nova `/reserva` (3 te
 
 ## O que é do Porks aqui
 - Horários (`_lib/rules.ts`): segunda fechado; terça a sexta 17h às 23h30; sábado 12h às 23h30; domingo 12h às 21h30. Sem mínimo por horário de pico. Mínimo 2 pessoas. Sem bloqueios recorrentes (a API não tem o endpoint; a lista fica vazia).
-- Promo (`PROMO_TIERS`): quinta a domingo, chegada 17h às 19h30, a partir de 5 pessoas ganha chopes (5, 8 e 10 pessoas). Aparece no contador, no horário e no bilhete.
+- Promo (`PROMO_TIERS`): quinta a domingo, qualquer horário, a partir de 5 pessoas ganha chopes (5, 8 e 10 pessoas). Aparece no contador, no horário e no bilhete.
 - Identidade: creme/osso de fundo, carvão no texto, laranja do chope nos botões com texto preto (igual ao CTA da home), Bebas Neue nos títulos e Barlow no corpo. Logo `/images/1.png`.
 - WhatsApp da equipe: 61 98177-6251 (o mesmo do concierge do site antigo).
 

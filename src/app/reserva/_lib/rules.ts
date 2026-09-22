@@ -11,10 +11,8 @@ export const DEFAULT_MIN_PEOPLE = 2;
 export const EVENING_CUTOFF_MIN = 17 * 60 + 30; // 17:30 separa tarde e noite (mesmo corte da API)
 export const MANECO_MIN_HOUR = 18; // sem uso no Porks; mantido pela assinatura dos componentes
 
-/** Promo da casa: de quinta a domingo, chegando entre 17h e 19h30, a mesa ganha chopes por tamanho do grupo. */
+/** Promo da casa: de quinta a domingo, em qualquer horário, a mesa ganha chopes por tamanho do grupo. */
 export const PROMO_DOWS = [4, 5, 6, 0];
-export const PROMO_FROM = '17:00';
-export const PROMO_TO = '19:30';
 export const PROMO_TIERS = [
   { min: 5, ganha: '5 chopes Pilsen' },
   { min: 8, ganha: '7 chopes Pilsen e 1 drink' },
@@ -24,7 +22,7 @@ export function promoTier(people: number) {
   return [...PROMO_TIERS].reverse().find((t) => people >= t.min) || null;
 }
 export function isPromoWindow(dateYMD: string | null, hhmm: string | null) {
-  return !!dateYMD && !!hhmm && PROMO_DOWS.includes(dayjs(dateYMD).day()) && hhmm >= PROMO_FROM && hhmm <= PROMO_TO;
+  return !!dateYMD && !!hhmm && PROMO_DOWS.includes(dayjs(dateYMD).day());
 }
 export function promoFor(dateYMD: string | null, hhmm: string | null, people: number) {
   return isPromoWindow(dateYMD, hhmm) ? promoTier(people) : null;

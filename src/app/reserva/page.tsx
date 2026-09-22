@@ -346,7 +346,7 @@ function Tela1() {
               <p className={s.hint} style={{ marginTop: 8 }}>
                 {promoWindow
                   ? <>Faltam {PROMO_TIERS[0].min - total} pessoas para a cortesia. <button type="button" className={s.linkBtn} onClick={() => setEditing('people')}>Ajustar o grupo</button></>
-                  : <><button type="button" className={s.linkBtn} onClick={() => setEditing('date')}>Trocar o dia</button> ou <button type="button" className={s.linkBtn} onClick={() => setEditing('time')}>o horário</button> para ganhar os chopes.</>}
+                  : <>A cortesia vale de quinta a domingo. <button type="button" className={s.linkBtn} onClick={() => setEditing('date')}>Trocar o dia</button> para ganhar os chopes.</>}
               </p>
             )}
           </div>

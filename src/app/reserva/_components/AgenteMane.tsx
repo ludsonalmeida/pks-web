@@ -57,7 +57,7 @@ function demoReply(text: string, d: Draft, nextId: () => number): Msg[] {
   }
   if (/m[ií]nimo|quantas|pessoas|grupo|chope|promo|ganh/.test(q)) {
     const min = d.minPeople || 2;
-    return [{ id: nextId(), who: 'bot', text: `No ${casa} a reserva online é a partir de ${min} pessoas. De quinta a domingo, chegando entre 17h e 19h30, a mesa ganha chopes: 5 pessoas levam 5 chopes Pilsen, 8 levam 7 chopes e um drink, 10 levam 9 chopes, um petisco e um drink. ${total && total < min ? `Você marcou ${total}: dá pra ajustar o grupo ou vir direto.` : ''}` }];
+    return [{ id: nextId(), who: 'bot', text: `No ${casa} a reserva online é a partir de ${min} pessoas. De quinta a domingo, em qualquer horário, a mesa ganha chopes: 5 pessoas levam 5 chopes Pilsen, 8 levam 7 chopes e um drink, 10 levam 9 chopes, um petisco e um drink. ${total && total < min ? `Você marcou ${total}: dá pra ajustar o grupo ou vir direto.` : ''}` }];
   }
   if (/toler|atras|espera|segura/.test(q)) {
     return [{ id: nextId(), who: 'bot', text: 'A mesa fica guardada por 15 minutos depois do horário. Se for atrasar, avisa no WhatsApp da casa que a equipe vê o que dá pra fazer.' }];

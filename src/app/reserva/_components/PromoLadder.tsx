@@ -76,10 +76,10 @@ export function PromoLadder({ people, dateYMD, time, compact }: { people: number
 
       <p key={`f-${tierKey}-${people}`} className={`${s.foot} ${s.footIn}`}>
         {!inWindow
-          ? 'Vale de quinta a domingo, chegando entre 17h e 19h30. Mude o dia ou o horário para ganhar.'
+          ? 'Vale de quinta a domingo, em qualquer horário. Mude o dia para ganhar.'
           : next
             ? <>Faltam <b>{next.min - people}</b> {next.min - people === 1 ? 'pessoa' : 'pessoas'} para <b>{next.ganha}</b>.</>
-            : 'Faixa máxima. Cortesia liberada na mesa, chegando entre 17h e 19h30, de quinta a domingo.'}
+            : 'Faixa máxima. Cortesia liberada na mesa, de quinta a domingo, em qualquer horário.'}
       </p>
     </section>
   );

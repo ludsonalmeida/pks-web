@@ -43,7 +43,7 @@ export function buildParams(r: NovaReserva): string[] {
     clean(r.time.replace(':00', 'h').replace(':30', 'h30')),
     String(r.people),
     clean(r.areaName || 'área a definir'),
-    promo ? clean(promo.ganha) : 'não (fora da janela qui a dom, 17h às 19h30, ou menos de 5 pessoas)',
+    promo ? clean(promo.ganha) : 'não (só de quinta a domingo, a partir de 5 pessoas)',
     r.birthdayBonus ? 'sim, +1 chope Pilsen' : 'não',
     fmtPhone(r.phone),
     clean(r.reservationCode || '-'),
