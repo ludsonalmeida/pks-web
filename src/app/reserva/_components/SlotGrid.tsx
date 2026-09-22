@@ -1,6 +1,6 @@
 'use client';
 
-import { IconBeer, IconMoodSmile, IconMusic, IconSunset2 } from '@tabler/icons-react';
+import { IconBeer, IconFlame, IconMusic, IconSunset2 } from '@tabler/icons-react';
 import d from './slot.module.css';
 import { ALLOWED_SLOTS, dayWindow, slotBlockReason, type RecurringRule } from '../_lib/rules';
 
@@ -10,9 +10,9 @@ const REASON_LABEL: Record<string, string> = {
 
 /** Clima da casa por faixa de horário: dá contexto sem inventar dado. */
 function vibe(hhmm: string): { text: string; Icon: typeof IconBeer } {
-  if (hhmm < '18:30') return { text: 'abertura, mesa fresca', Icon: IconSunset2 };
-  if (hhmm < '19:30') return { text: 'cedo e tranquilo', Icon: IconMoodSmile };
-  if (hhmm < '20:30') return { text: 'hora da galera', Icon: IconMusic };
+  if (hhmm < '19:00') return { text: 'pôr do sol', Icon: IconSunset2 };
+  if (hhmm < '20:00') return { text: 'esquenta', Icon: IconFlame };
+  if (hhmm < '21:00') return { text: 'hora da galera', Icon: IconMusic };
   return { text: 'última chamada', Icon: IconBeer };
 }
 
