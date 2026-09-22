@@ -183,7 +183,7 @@ export default function AgenteMane() {
   return (
     <>
       {!open && hint && (
-        <div className={s.hint} role="status">
+        <div className={`${s.hint} agente-hint`} role="status">
           <div>{hint}</div>
           <div className={s.hintRow}>
             <button type="button" className={`${s.hintBtn} ${s.hintNo}`} onClick={() => setHint(null)}>Agora não</button>
@@ -192,7 +192,7 @@ export default function AgenteMane() {
         </div>
       )}
       {!open && (
-        <button type="button" className={`${s.fab} ${compact && !hint ? s.compact : ''}`} onClick={() => abrir('botao')} aria-label="Falar com o Agente do Porks, uma inteligência artificial">
+        <button type="button" className={`${s.fab} agente-fab ${compact && !hint ? s.compact : ''}`} onClick={() => abrir('botao')} aria-label="Falar com o Agente do Porks, uma inteligência artificial">
           <span className={s.avatar} aria-hidden="true"><Spark /><span className={s.ia}>IA</span></span>
           <span className={s.fabText}>Agente do Porks<small>ajuda com sua reserva</small></span>
         </button>

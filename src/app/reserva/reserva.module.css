@@ -344,3 +344,9 @@
 .spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--gold-soft); border-top-color: var(--teal); animation: spin 700ms linear infinite; flex: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+
+/* no celular o rodapé fixo (botão principal) ocupa o pé da tela: o agente sobe pra não ficar em cima dele */
+@media (max-width: 719px) {
+  .shell:has(.footer) :global(.agente-fab) { bottom: calc(106px + env(safe-area-inset-bottom, 0px)); }
+  .shell:has(.footer) :global(.agente-hint) { bottom: calc(168px + env(safe-area-inset-bottom, 0px)); }
+}
