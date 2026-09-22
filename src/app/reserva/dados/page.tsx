@@ -350,7 +350,7 @@ export default function Dados() {
             ) : (
               <>
                 <input id="f-birthday" className={`${s.input} ${show('birthday') ? s.inputErr : ''}`} type="text" inputMode="numeric" autoComplete="bday"
-                  placeholder="DD/MM/AAAA" value={birthday} onChange={(e) => setBirthday(maskDateBR(e.target.value))} onBlur={blur('birthday')} />
+                  placeholder="DD/MM/AAAA" value={birthday} onChange={(e) => setBirthday(maskDateBR(e.target.value))} />
                 {show('birthday') && <p className={s.err} role="alert">{errors.birthday}</p>}
               </>
             )}
