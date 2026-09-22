@@ -1,0 +1,45 @@
+/* Cartões de dia: faixa rolável, número grande em Bebas, etiqueta de chope nos dias de cortesia. */
+.strip {
+  display: flex; gap: 10px; overflow-x: auto; padding: 6px 4px 10px; margin: -6px -4px -4px;
+  scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.strip::-webkit-scrollbar { display: none; }
+
+.day {
+  flex: none; scroll-snap-align: center; width: 76px; min-height: 96px; padding: 10px 6px 8px;
+  border-radius: 16px; border: 2px solid var(--line); background: var(--paper); color: var(--ink);
+  display: grid; justify-items: center; align-content: start; gap: 2px; position: relative; cursor: pointer; font: inherit;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease, transform 160ms cubic-bezier(0.2, 0.9, 0.2, 1), box-shadow 160ms ease;
+  animation: dayIn 380ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+@keyframes dayIn { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: none; } }
+.day:hover { border-color: var(--teal); transform: translateY(-2px); }
+.day:active { transform: scale(0.96); }
+.day[aria-checked='true'] {
+  background: var(--teal); border-color: var(--teal); color: var(--onp);
+  box-shadow: 0 8px 20px rgba(231, 138, 25, 0.35); transform: translateY(-2px) scale(1.03);
+}
+.day:disabled { cursor: not-allowed; opacity: 0.5; border-style: dashed; background: transparent; transform: none; }
+.day:disabled .num { text-decoration: line-through; text-decoration-thickness: 3px; text-decoration-color: var(--red); }
+
+.wd { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.day[aria-checked='true'] .wd, .day[aria-checked='true'] .mo { color: rgba(13, 12, 11, 0.7); }
+.num { font-family: var(--font-bebas), "Bebas Neue", Impact, sans-serif; font-weight: 400; font-size: 34px; line-height: 1; letter-spacing: 0.02em; margin-top: 2px; }
+.mo { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+
+/* dias de cortesia: borda laranja suave e etiqueta com o chope */
+.bonus { border-color: rgba(231, 138, 25, 0.55); background: linear-gradient(180deg, var(--paper), #fff3e0); }
+.tag {
+  position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 999px;
+  background: var(--teal); color: var(--onp); font-size: 9.5px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(231, 138, 25, 0.35); white-space: nowrap;
+}
+.day[aria-checked='true'] .tag { background: var(--ink); color: var(--creme); }
+.closed .wd { color: var(--red); }
+
+.other { border-style: dashed; color: var(--link); gap: 4px; align-content: center; }
+.other .wd, .other .mo { color: inherit; }
+.other[aria-checked='true'] { border-style: solid; color: var(--onp); }
+
+.legend { margin: 6px 0 0; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--link); }

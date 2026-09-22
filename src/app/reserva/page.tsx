@@ -113,7 +113,8 @@ function Tela1() {
       time: null, areaId: null, areaName: null,
       adults: draft.adults && draft.adults < min ? min : draft.adults,
     });
-    setEditing(null);
+    // a casa entra sozinha no Porks: não pode apagar um ?edit=time/date que veio no link
+    setEditing((e) => (e === 'unit' ? null : e));
   }
 
   const unit = units.find((u) => u.id === draft.unitId) || null;
