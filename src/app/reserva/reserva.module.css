@@ -350,3 +350,12 @@
   .shell:has(.footer) :global(.agente-fab) { bottom: calc(106px + env(safe-area-inset-bottom, 0px)); }
   .shell:has(.footer) :global(.agente-hint) { bottom: calc(168px + env(safe-area-inset-bottom, 0px)); }
 }
+
+/* assinatura Virtude Digital no pé da página (abre o site em nova aba) */
+.credit {
+  display: flex; align-items: center; justify-content: center; gap: 7px; width: max-content; margin: 48px auto 0;
+  font-size: 12.5px; color: var(--muted); text-decoration: none; transition: color var(--t);
+}
+.credit:hover { color: var(--ink); }
+.credit svg { height: 12px; width: auto; }
+.credit b { font-weight: 700; }
